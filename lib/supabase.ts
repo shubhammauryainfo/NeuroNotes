@@ -38,7 +38,12 @@ export async function createServerSupabaseClient() {
       },
       setAll(cookiesToSet: CookieToSet[]) {
         cookiesToSet.forEach(({ name, value, options }) => {
-          cookieStore.set(name, value, options);
+          try {
+            cookieStore.set(name, value, options);
+          } catch {
+            // Server Components can read cookies but cannot always write them.
+            // Middleware, route handlers, and server actions handle refresh writes.
+          }
         });
       }
     }

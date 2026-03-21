@@ -1,6 +1,6 @@
+import { AiNotesPreview } from "@/components/notes/AiNotesPreview";
 import { NoteForm } from "@/components/notes/NoteForm";
 import { NoteList } from "@/components/notes/NoteList";
-import { Card } from "@/components/ui/Card";
 import { requireUser } from "@/lib/auth";
 import { generateStudyTool } from "@/lib/ai";
 import { getNotes } from "@/server/actions/notes";
@@ -23,12 +23,7 @@ export default async function NotesPage() {
     <main className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
       <div className="space-y-6">
         <NoteForm />
-        <Card className="bg-mint">
-          <h2 className="mb-4 text-xl font-black uppercase">Latest AI summary</h2>
-          <p className="whitespace-pre-wrap text-sm font-bold uppercase leading-6">
-            {summary}
-          </p>
-        </Card>
+        <AiNotesPreview content={summary} />
       </div>
       <NoteList notes={notes} />
     </main>

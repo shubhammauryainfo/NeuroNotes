@@ -42,7 +42,7 @@ export async function generateStudyTool(
 ) {
   const prompts = {
     summary:
-      "Summarize these study notes into crisp revision bullets with key concepts, formulas, and likely exam takeaways.",
+      "Turn these study notes into structured revision notes. Use short section headings, bullet points, key ideas, formulas if present, and an exam takeaway section. Keep the format easy to scan like class notes.",
     mcq:
       "Generate 5 multiple-choice questions from these notes. Provide options A-D and mark the correct answer.",
     flashcards:

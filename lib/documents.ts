@@ -18,12 +18,10 @@ export async function extractTextFromFile(file: File) {
   const buffer = Buffer.from(bytes);
 
   if (extension === "pdf") {
-    const { PDFParse } = await import("pdf-parse");
-    const parser = new PDFParse({ data: buffer });
-    const result = await parser.getText();
+    const pdfParseModule = await import("pdf-parse/lib/pdf-parse.js");
+    const pdfParse = pdfParseModule.default;
+    const result = await pdfParse(buffer);
     const text = normalizeExtractedText(result.text);
-
-    await parser.destroy();
 
     if (!text) {
       throw new Error("Could not extract text from this PDF");
