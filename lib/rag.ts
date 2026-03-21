@@ -9,6 +9,43 @@ type RetrievedChunk = {
   topic?: string;
 };
 
+type FallbackNote = {
+  title: string;
+  content: string;
+  subject?: string;
+  topic?: string;
+};
+
+function getQuestionKeywords(question: string) {
+  return question
+    .toLowerCase()
+    .split(/[^a-z0-9]+/)
+    .filter((word) => word.length > 3)
+    .slice(0, 6);
+}
+
+function buildFallbackContext(notes: FallbackNote[], keywords: string[]) {
+  const scored = notes
+    .map((note) => {
+      const haystack = `${note.title} ${note.subject ?? ""} ${note.topic ?? ""} ${note.content}`.toLowerCase();
+      const score = keywords.reduce(
+        (total, keyword) => total + (haystack.includes(keyword) ? 1 : 0),
+        0
+      );
+
+      return { note, score };
+    })
+    .filter((item) => item.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 3);
+
+  return scored.map(({ note }, index) => {
+    const label = [note.title, note.subject, note.topic].filter(Boolean).join(" / ");
+    const excerpt = note.content.slice(0, 1400);
+    return `[Fallback ${index + 1}${label ? ` - ${label}` : ""}]\n${excerpt}`;
+  });
+}
+
 export async function askYourNotes(question: string, userId: string) {
   const supabase = createServiceRoleSupabaseClient();
   const embedding = await createEmbedding(question);
@@ -24,14 +61,31 @@ export async function askYourNotes(question: string, userId: string) {
   }
 
   const chunks = ((data as RetrievedChunk[] | null) ?? []).slice(0, 8);
-  const context = chunks
+  let contextBlocks = chunks
     .map((chunk, index) => {
       const label = [chunk.note_title, chunk.subject, chunk.topic]
         .filter(Boolean)
         .join(" / ");
       return `[Chunk ${index + 1}${label ? ` - ${label}` : ""}]\n${chunk.content_chunk}`;
-    })
-    .join("\n\n");
+    });
+
+  if (contextBlocks.length === 0) {
+    const { data: notes } = await supabase
+      .from("notes")
+      .select("title,content,subject,topic")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false })
+      .limit(12);
+
+    const fallbackBlocks = buildFallbackContext(
+      (notes as FallbackNote[] | null) ?? [],
+      getQuestionKeywords(question)
+    );
+
+    contextBlocks = fallbackBlocks;
+  }
+
+  const context = contextBlocks.join("\n\n");
 
   const { data: profile } = await supabase
     .from("user_profile")

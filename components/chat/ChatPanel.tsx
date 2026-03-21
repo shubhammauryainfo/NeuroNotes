@@ -1,7 +1,8 @@
-import { askNotesQuestion } from "@/server/actions/chat";
-import { Button } from "@/components/ui/Button";
+import { askNotesQuestion, deleteChat } from "@/server/actions/chat";
+import { AssistantMessage } from "@/components/chat/AssistantMessage";
 import { Card } from "@/components/ui/Card";
 import { Textarea } from "@/components/ui/Input";
+import { SubmitButton } from "@/components/ui/SubmitButton";
 
 type ChatRecord = {
   id: string;
@@ -20,19 +21,31 @@ export function ChatPanel({ chats }: { chats: ChatRecord[] }) {
             placeholder="Ask a concept question, request an explanation, or test yourself from your notes..."
             required
           />
-          <Button type="submit" className="w-full md:w-fit">
-            Run RAG answer
-          </Button>
+          <SubmitButton
+            className="w-full md:w-fit"
+            idleLabel="Run RAG answer"
+            pendingLabel="Thinking with your notes..."
+          />
         </form>
       </Card>
       <div className="grid gap-4">
         {chats.map((chat) => (
           <Card key={chat.id} className="bg-white">
             <div className="mb-3 flex items-center justify-between">
-              <h3 className="text-sm font-black uppercase">Recent chat</h3>
-              <span className="text-xs font-black uppercase">
-                {new Date(chat.created_at).toLocaleString()}
-              </span>
+              <div>
+                <h3 className="text-sm font-black uppercase">Recent chat</h3>
+                <span className="text-xs font-black uppercase">
+                  {new Date(chat.created_at).toLocaleString()}
+                </span>
+              </div>
+              <form action={deleteChat.bind(null, chat.id)}>
+                <SubmitButton
+                  variant="danger"
+                  className="px-3 py-2 text-xs"
+                  idleLabel="Delete"
+                  pendingLabel="Deleting..."
+                />
+              </form>
             </div>
             <div className="space-y-3">
               {chat.messages?.map((message, index) => (
@@ -45,9 +58,13 @@ export function ChatPanel({ chats }: { chats: ChatRecord[] }) {
                   }
                 >
                   <p className="mb-1 text-xs font-black uppercase">{message.role}</p>
-                  <p className="whitespace-pre-wrap text-sm font-bold leading-6">
-                    {message.content}
-                  </p>
+                  {message.role === "assistant" ? (
+                    <AssistantMessage content={message.content} />
+                  ) : (
+                    <p className="whitespace-pre-wrap text-sm font-bold leading-6">
+                      {message.content}
+                    </p>
+                  )}
                 </div>
               ))}
             </div>

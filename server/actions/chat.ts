@@ -85,3 +85,21 @@ export async function getRecentChats() {
 
   return data ?? [];
 }
+
+export async function deleteChat(chatId: string) {
+  const user = await requireUser();
+  const supabase = await createServerSupabaseClient();
+
+  const { error } = await supabase
+    .from("chats")
+    .delete()
+    .eq("id", chatId)
+    .eq("user_id", user.id);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  revalidatePath("/chat");
+  revalidatePath("/analytics");
+}

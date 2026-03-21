@@ -1,10 +1,13 @@
 import { signInWithGoogle } from "@/lib/auth";
-import { Button } from "@/components/ui/Button";
+import { SubmitButton } from "@/components/ui/SubmitButton";
 
 export function SignInButton() {
   return (
     <form action={signInWithGoogle}>
-      <Button type="submit">Sign in with Google</Button>
+      <SubmitButton
+        idleLabel="Sign in with Google"
+        pendingLabel="Redirecting..."
+      />
     </form>
   );
 }

@@ -1,12 +1,15 @@
 import { signOut } from "@/lib/auth";
-import { Button } from "@/components/ui/Button";
+import { SubmitButton } from "@/components/ui/SubmitButton";
 
 export function SignOutButton() {
   return (
     <form action={signOut}>
-      <Button type="submit" variant="secondary" className="px-3 py-2 text-xs">
-        Sign out
-      </Button>
+      <SubmitButton
+        variant="secondary"
+        className="px-3 py-2 text-xs"
+        idleLabel="Sign out"
+        pendingLabel="Signing out..."
+      />
     </form>
   );
 }

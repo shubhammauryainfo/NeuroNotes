@@ -42,7 +42,18 @@ export async function generateStudyTool(
 ) {
   const prompts = {
     summary:
-      "Turn these study notes into structured revision notes. Use short section headings, bullet points, key ideas, formulas if present, and an exam takeaway section. Keep the format easy to scan like class notes.",
+      `Turn these study notes into structured revision notes.
+
+Formatting rules:
+- Use short uppercase section headings
+- Under each heading, use clean bullet points
+- Keep each bullet concise and exam-focused
+- Include formulas or definitions when present
+- End with a heading called EXAM TAKEAWAYS
+- Do not write long paragraphs unless absolutely necessary
+- Do not use markdown tables
+
+Return the result in neat student-note format.`,
     mcq:
       "Generate 5 multiple-choice questions from these notes. Provide options A-D and mark the correct answer.",
     flashcards:

@@ -1,8 +1,8 @@
 import { createNote } from "@/server/actions/notes";
 import { getMaxUploadSizeBytes } from "@/lib/uploads";
-import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Input, Textarea } from "@/components/ui/Input";
+import { SubmitButton } from "@/components/ui/SubmitButton";
 
 export function NoteForm() {
   const maxUploadSizeMb = getMaxUploadSizeBytes() / (1024 * 1024);
@@ -42,9 +42,11 @@ export function NoteForm() {
           name="content"
           placeholder="Paste your lecture notes, revision bullets, or add extra text to combine with an uploaded document..."
         />
-        <Button type="submit" className="w-full md:w-fit">
-          Save note or upload document
-        </Button>
+        <SubmitButton
+          className="w-full md:w-fit"
+          idleLabel="Save note or upload document"
+          pendingLabel="Uploading and embedding..."
+        />
       </form>
     </Card>
   );
