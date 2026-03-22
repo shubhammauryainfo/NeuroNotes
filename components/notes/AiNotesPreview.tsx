@@ -123,68 +123,80 @@ export function AiNotesPreview({ content }: { content: string }) {
 
   return (
     <Card className="bg-mint">
-      <div className="mb-4 flex items-center justify-between gap-3">
-        <h2 className="text-xl font-black uppercase">Latest AI notes</h2>
-        <span className="border-[3px] border-ink bg-white px-3 py-1 text-[10px] font-black uppercase text-ink shadow-brutal-sm">
-          Scroll
-        </span>
-      </div>
+      <details className="group" open>
+        <summary className="cursor-pointer list-none">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <h2 className="text-xl font-black uppercase">Latest AI notes</h2>
+              <p className="mt-2 text-xs font-black uppercase group-open:hidden">
+                Expand AI notes
+              </p>
+              <p className="mt-2 hidden text-xs font-black uppercase group-open:block">
+                Collapse AI notes
+              </p>
+            </div>
+            <span className="border-[3px] border-ink bg-white px-3 py-1 text-[10px] font-black uppercase text-ink shadow-brutal-sm">
+              Scroll
+            </span>
+          </div>
+        </summary>
 
-      <div className="max-h-[30rem] space-y-4 overflow-y-auto pr-2">
-        {blocks.map((block, index) => {
-          if (block.type === "heading") {
+        <div className="mt-4 max-h-[30rem] space-y-4 overflow-y-auto pr-2">
+          {blocks.map((block, index) => {
+            if (block.type === "heading") {
+              return (
+                <div
+                  key={`heading-${index}`}
+                  className="border-[3px] border-ink bg-white px-4 py-2 text-sm font-black uppercase text-ink shadow-brutal-sm"
+                >
+                  {block.content}
+                </div>
+              );
+            }
+
+            if (block.type === "bulletList") {
+              return (
+                <ul
+                  key={`bullets-${index}`}
+                  className="space-y-2 border-[3px] border-ink bg-white p-4 text-sm font-bold leading-6 text-ink shadow-brutal-sm"
+                >
+                  {block.items.map((item, itemIndex) => (
+                    <li key={`bullet-${index}-${itemIndex}`} className="flex gap-3">
+                      <span className="mt-[2px] text-base font-black">■</span>
+                      <span>{renderInlineEmphasis(item)}</span>
+                    </li>
+                  ))}
+                </ul>
+              );
+            }
+
+            if (block.type === "numberList") {
+              return (
+                <ol
+                  key={`numbers-${index}`}
+                  className="space-y-2 border-[3px] border-ink bg-lemon p-4 text-sm font-bold leading-6 text-ink shadow-brutal-sm"
+                >
+                  {block.items.map((item, itemIndex) => (
+                    <li key={`number-${index}-${itemIndex}`} className="flex gap-3">
+                      <span className="min-w-6 font-black">{itemIndex + 1}.</span>
+                      <span>{renderInlineEmphasis(item)}</span>
+                    </li>
+                  ))}
+                </ol>
+              );
+            }
+
             return (
               <div
-                key={`heading-${index}`}
-                className="border-[3px] border-ink bg-white px-4 py-2 text-sm font-black uppercase text-ink shadow-brutal-sm"
+                key={`paragraph-${index}`}
+                className="border-[3px] border-ink bg-cream p-4 text-sm font-bold leading-7 text-ink shadow-brutal-sm"
               >
-                {block.content}
+                {renderInlineEmphasis(block.content)}
               </div>
             );
-          }
-
-          if (block.type === "bulletList") {
-            return (
-              <ul
-                key={`bullets-${index}`}
-                className="space-y-2 border-[3px] border-ink bg-white p-4 text-sm font-bold leading-6 text-ink shadow-brutal-sm"
-              >
-                {block.items.map((item, itemIndex) => (
-                  <li key={`bullet-${index}-${itemIndex}`} className="flex gap-3">
-                    <span className="mt-[2px] text-base font-black">■</span>
-                    <span>{renderInlineEmphasis(item)}</span>
-                  </li>
-                ))}
-              </ul>
-            );
-          }
-
-          if (block.type === "numberList") {
-            return (
-              <ol
-                key={`numbers-${index}`}
-                className="space-y-2 border-[3px] border-ink bg-lemon p-4 text-sm font-bold leading-6 text-ink shadow-brutal-sm"
-              >
-                {block.items.map((item, itemIndex) => (
-                  <li key={`number-${index}-${itemIndex}`} className="flex gap-3">
-                    <span className="min-w-6 font-black">{itemIndex + 1}.</span>
-                    <span>{renderInlineEmphasis(item)}</span>
-                  </li>
-                ))}
-              </ol>
-            );
-          }
-
-          return (
-            <div
-              key={`paragraph-${index}`}
-              className="border-[3px] border-ink bg-cream p-4 text-sm font-bold leading-7 text-ink shadow-brutal-sm"
-            >
-              {renderInlineEmphasis(block.content)}
-            </div>
-          );
-        })}
-      </div>
+          })}
+        </div>
+      </details>
     </Card>
   );
 }
