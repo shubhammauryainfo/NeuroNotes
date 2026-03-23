@@ -135,9 +135,9 @@ export function AiNotesPreview({ content }: { content: string }) {
                 Collapse AI notes
               </p>
             </div>
-            <span className="border-[3px] border-ink bg-white px-3 py-1 text-[10px] font-black uppercase text-ink shadow-brutal-sm">
+            {/* <span className="border-[3px] border-ink bg-white px-3 py-1 text-[10px] font-black uppercase text-ink shadow-brutal-sm">
               Scroll
-            </span>
+            </span> */}
           </div>
         </summary>
 
