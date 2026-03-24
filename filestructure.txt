@@ -1,0 +1,87 @@
+|-- .env
+|-- .gitignore
+|-- app
+    |-- analytics
+        |-- page.tsx
+    |-- api
+        |-- ai
+            |-- flashcards
+                |-- route.ts
+            |-- mcq
+                |-- route.ts
+            |-- summarize
+                |-- route.ts
+            |-- viva
+                |-- route.ts
+        |-- chat
+            |-- ask
+                |-- route.ts
+        |-- notes
+            |-- create
+                |-- route.ts
+            |-- get
+                |-- route.ts
+    |-- auth
+        |-- callback
+            |-- route.ts
+    |-- chat
+        |-- page.tsx
+    |-- dashboard
+        |-- page.tsx
+    |-- favicon.ico
+    |-- layout.tsx
+    |-- notes
+        |-- page.tsx
+    |-- page.tsx
+|-- bun.lock
+|-- components
+    |-- auth
+        |-- SignInButton.tsx
+        |-- SignOutButton.tsx
+    |-- chat
+        |-- AssistantMessage.tsx
+        |-- ChatPanel.tsx
+    |-- dashboard
+        |-- StatsGrid.tsx
+    |-- notes
+        |-- AiNotesPreview.tsx
+        |-- NoteForm.tsx
+        |-- NoteList.tsx
+    |-- ui
+        |-- Button.tsx
+        |-- Card.tsx
+        |-- Input.tsx
+        |-- SubmitButton.tsx
+        |-- ThemeToggle.tsx
+|-- lib
+    |-- ai.ts
+    |-- auth.ts
+    |-- documents.ts
+    |-- embeddings.ts
+    |-- rag.ts
+    |-- supabase.ts
+    |-- uploads.ts
+    |-- utils.ts
+|-- middleware.ts
+|-- next-env.d.ts
+|-- next.config.ts
+|-- package-lock.json
+|-- package.json
+|-- postcss.config.js
+|-- public
+    |-- logo.png
+|-- README.md
+|-- server
+    |-- actions
+        |-- chat.ts
+        |-- embeddings.ts
+        |-- notes.ts
+|-- styles
+    |-- globals.css
+|-- supabase
+    |-- schema.sql
+|-- tailwind.config.ts
+|-- tsconfig.json
+|-- tsconfig.tsbuildinfo
+|-- types
+    |-- pdf-parse.d.ts
