@@ -61,6 +61,7 @@
     |-- rag.ts
     |-- supabase.ts
     |-- uploads.ts
+    |-- user-sync.ts
     |-- utils.ts
 |-- middleware.ts
 |-- next-env.d.ts
