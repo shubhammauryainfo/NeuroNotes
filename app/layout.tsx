@@ -24,6 +24,7 @@ const navItems = [
   { href: "/dashboard", label: "Dashboard" },
   { href: "/notes", label: "Notes" },
   { href: "/chat", label: "Chat" },
+  { href: "/quiz", label: "Quiz" },
   { href: "/analytics", label: "Analytics" }
 ] satisfies Array<{ href: Route; label: string }>;
 

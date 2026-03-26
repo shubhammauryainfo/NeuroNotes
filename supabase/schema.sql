@@ -50,12 +50,38 @@ create table if not exists public.user_profile (
   updated_at timestamptz not null default now()
 );
 
+create table if not exists public.quiz_sessions (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  topic text,
+  difficulty text not null default 'adaptive',
+  source_note_ids uuid[] not null default '{}',
+  questions jsonb not null,
+  score int,
+  total_questions int not null default 0,
+  status text not null default 'generated' check (status in ('generated', 'completed')),
+  created_at timestamptz not null default now(),
+  completed_at timestamptz
+);
+
+create table if not exists public.quiz_answers (
+  id uuid primary key default gen_random_uuid(),
+  quiz_session_id uuid not null references public.quiz_sessions(id) on delete cascade,
+  question_index int not null,
+  selected_option text not null,
+  correct_option text,
+  is_correct boolean,
+  created_at timestamptz not null default now()
+);
+
 alter table public.users enable row level security;
 alter table public.notes enable row level security;
 alter table public.note_chunks enable row level security;
 alter table public.chats enable row level security;
 alter table public.messages enable row level security;
 alter table public.user_profile enable row level security;
+alter table public.quiz_sessions enable row level security;
+alter table public.quiz_answers enable row level security;
 
 create policy "users_select_own_profile"
 on public.users for select
@@ -100,11 +126,37 @@ on public.user_profile for all
 using (auth.uid() = user_id)
 with check (auth.uid() = user_id);
 
+create policy "quiz_sessions_manage_own"
+on public.quiz_sessions for all
+using (auth.uid() = user_id)
+with check (auth.uid() = user_id);
+
+create policy "quiz_answers_manage_own"
+on public.quiz_answers for all
+using (
+  exists (
+    select 1
+    from public.quiz_sessions
+    where public.quiz_sessions.id = quiz_answers.quiz_session_id
+      and public.quiz_sessions.user_id = auth.uid()
+  )
+)
+with check (
+  exists (
+    select 1
+    from public.quiz_sessions
+    where public.quiz_sessions.id = quiz_answers.quiz_session_id
+      and public.quiz_sessions.user_id = auth.uid()
+  )
+);
+
 create index if not exists notes_user_id_idx on public.notes(user_id);
 create index if not exists note_chunks_user_id_idx on public.note_chunks(user_id);
 create index if not exists note_chunks_note_id_idx on public.note_chunks(note_id);
 create index if not exists chats_user_id_idx on public.chats(user_id);
 create index if not exists messages_chat_id_idx on public.messages(chat_id);
+create index if not exists quiz_sessions_user_id_idx on public.quiz_sessions(user_id);
+create index if not exists quiz_answers_quiz_session_id_idx on public.quiz_answers(quiz_session_id);
 
 create index if not exists note_chunks_embedding_idx
 on public.note_chunks using ivfflat (embedding vector_cosine_ops)

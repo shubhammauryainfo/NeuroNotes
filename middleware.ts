@@ -35,7 +35,7 @@ export async function middleware(request: NextRequest) {
 
   if (
     !user &&
-    ["/dashboard", "/notes", "/chat", "/analytics"].some((route) =>
+    ["/dashboard", "/notes", "/chat", "/quiz", "/analytics"].some((route) =>
       request.nextUrl.pathname.startsWith(route)
     )
   ) {
@@ -48,5 +48,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/notes/:path*", "/chat/:path*", "/analytics/:path*"]
+  matcher: ["/dashboard/:path*", "/notes/:path*", "/chat/:path*", "/quiz/:path*", "/analytics/:path*"]
 };

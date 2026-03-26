@@ -10,13 +10,15 @@ type SubmitButtonProps = {
   pendingLabel: ReactNode;
   className?: string;
   variant?: "primary" | "secondary" | "danger";
+  disabled?: boolean;
 };
 
 export function SubmitButton({
   idleLabel,
   pendingLabel,
   className,
-  variant = "primary"
+  variant = "primary",
+  disabled = false
 }: SubmitButtonProps) {
   const { pending } = useFormStatus();
 
@@ -25,7 +27,7 @@ export function SubmitButton({
       type="submit"
       variant={variant}
       className={className}
-      disabled={pending}
+      disabled={pending || disabled}
       aria-busy={pending}
     >
       <span className="flex items-center gap-2">
