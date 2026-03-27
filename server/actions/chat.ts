@@ -48,7 +48,8 @@ export async function askNotesQuestion(formData: FormData) {
       {
         chat_id: chat.id,
         role: "assistant",
-        content: result.answer
+        content: result.answer,
+        citations: result.citations
       }
     ]);
   }
@@ -74,7 +75,7 @@ export async function getRecentChats() {
 
   const { data, error } = await supabase
     .from("chats")
-    .select("id,created_at,messages(role,content)")
+    .select("id,created_at,messages(role,content,citations)")
     .eq("user_id", user.id)
     .order("created_at", { ascending: false })
     .limit(6);

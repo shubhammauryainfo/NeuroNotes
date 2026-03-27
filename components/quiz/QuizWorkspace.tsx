@@ -24,6 +24,7 @@ type QuizWorkspaceProps = {
   setupReady: boolean;
   selectedSessionId: string | null;
   generateAdaptiveQuizAction: () => Promise<void>;
+  generateRetryWrongAnswersAction: (formData: FormData) => Promise<void>;
   submitAdaptiveQuizAction: (formData: FormData) => Promise<void>;
 };
 
@@ -142,6 +143,7 @@ export function QuizWorkspace({
   setupReady,
   selectedSessionId,
   generateAdaptiveQuizAction,
+  generateRetryWrongAnswersAction,
   submitAdaptiveQuizAction
 }: QuizWorkspaceProps) {
   const initialSelections = useMemo(() => {
@@ -541,6 +543,24 @@ export function QuizWorkspace({
                   )}
                 </div>
               ) : null}
+
+              {isCompleted ? (
+                <div className="border-[3px] border-ink bg-cream p-4 shadow-brutal-sm">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <p className="text-sm font-black uppercase leading-6">
+                      Build a focused retry quiz from only the questions you missed.
+                    </p>
+                    <form action={generateRetryWrongAnswersAction}>
+                      <input type="hidden" name="sessionId" value={activeQuiz.id} />
+                      <SubmitButton
+                        idleLabel="Retry wrong answers"
+                        pendingLabel="Building retry quiz..."
+                        variant="secondary"
+                      />
+                    </form>
+                  </div>
+                </div>
+              ) : null}
             </form>
           )}
         </Card>
@@ -622,6 +642,17 @@ export function QuizWorkspace({
                               className="px-3 py-2 text-xs"
                             />
                           </form>
+                          {session.status === "completed" ? (
+                            <form action={generateRetryWrongAnswersAction}>
+                              <input type="hidden" name="sessionId" value={session.id} />
+                              <SubmitButton
+                                idleLabel="Retry wrong"
+                                pendingLabel="Building..."
+                                variant="secondary"
+                                className="px-3 py-2 text-xs"
+                              />
+                            </form>
+                          ) : null}
                         </div>
                       </div>
                     </div>

@@ -3,17 +3,29 @@ import { createEmbedding } from "@/lib/embeddings";
 import { createServiceRoleSupabaseClient } from "@/lib/supabase";
 
 type RetrievedChunk = {
+  id?: string;
   content_chunk: string;
   note_title?: string;
   subject?: string;
   topic?: string;
+  similarity?: number;
 };
 
 type FallbackNote = {
+  id?: string;
   title: string;
   content: string;
   subject?: string;
   topic?: string;
+};
+
+export type Citation = {
+  label: string;
+  noteTitle: string;
+  subject: string | null;
+  topic: string | null;
+  similarity: number | null;
+  preview: string;
 };
 
 function getQuestionKeywords(question: string) {
@@ -24,8 +36,8 @@ function getQuestionKeywords(question: string) {
     .slice(0, 6);
 }
 
-function buildFallbackContext(notes: FallbackNote[], keywords: string[]) {
-  const scored = notes
+function scoreFallbackNotes(notes: FallbackNote[], keywords: string[]) {
+  return notes
     .map((note) => {
       const haystack = `${note.title} ${note.subject ?? ""} ${note.topic ?? ""} ${note.content}`.toLowerCase();
       const score = keywords.reduce(
@@ -36,14 +48,42 @@ function buildFallbackContext(notes: FallbackNote[], keywords: string[]) {
       return { note, score };
     })
     .filter((item) => item.score > 0)
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 3);
+    .sort((a, b) => b.score - a.score);
+}
 
-  return scored.map(({ note }, index) => {
+function buildFallbackContext(scoredNotes: Array<{ note: FallbackNote; score: number }>) {
+  return scoredNotes.slice(0, 3).map(({ note }, index) => {
     const label = [note.title, note.subject, note.topic].filter(Boolean).join(" / ");
     const excerpt = note.content.slice(0, 1400);
     return `[Fallback ${index + 1}${label ? ` - ${label}` : ""}]\n${excerpt}`;
   });
+}
+
+function buildChunkCitations(chunks: RetrievedChunk[]) {
+  return chunks.slice(0, 3).map((chunk, index) => ({
+    label: `Chunk ${index + 1}`,
+    noteTitle: chunk.note_title || "Untitled note",
+    subject: chunk.subject ?? null,
+    topic: chunk.topic ?? null,
+    similarity:
+      typeof chunk.similarity === "number"
+        ? Number(chunk.similarity.toFixed(3))
+        : null,
+    preview: chunk.content_chunk.slice(0, 180)
+  }));
+}
+
+function buildFallbackCitations(
+  scoredNotes: Array<{ note: FallbackNote; score: number }>
+) {
+  return scoredNotes.slice(0, 3).map(({ note, score }, index) => ({
+    label: `Fallback ${index + 1}`,
+    noteTitle: note.title || "Untitled note",
+    subject: note.subject ?? null,
+    topic: note.topic ?? null,
+    similarity: score ? Number((score / 6).toFixed(3)) : null,
+    preview: note.content.slice(0, 180)
+  }));
 }
 
 export async function askYourNotes(question: string, userId: string) {
@@ -61,6 +101,7 @@ export async function askYourNotes(question: string, userId: string) {
   }
 
   const chunks = ((data as RetrievedChunk[] | null) ?? []).slice(0, 8);
+  let citations: Citation[] = buildChunkCitations(chunks);
   let contextBlocks = chunks
     .map((chunk, index) => {
       const label = [chunk.note_title, chunk.subject, chunk.topic]
@@ -72,15 +113,17 @@ export async function askYourNotes(question: string, userId: string) {
   if (contextBlocks.length === 0) {
     const { data: notes } = await supabase
       .from("notes")
-      .select("title,content,subject,topic")
+      .select("id,title,content,subject,topic")
       .eq("user_id", userId)
       .order("created_at", { ascending: false })
       .limit(12);
 
-    const fallbackBlocks = buildFallbackContext(
+    const scoredFallbackNotes = scoreFallbackNotes(
       (notes as FallbackNote[] | null) ?? [],
       getQuestionKeywords(question)
     );
+    const fallbackBlocks = buildFallbackContext(scoredFallbackNotes);
+    citations = buildFallbackCitations(scoredFallbackNotes);
 
     contextBlocks = fallbackBlocks;
   }
@@ -122,6 +165,7 @@ ${question}`;
 
   return {
     answer,
-    chunks
+    chunks,
+    citations
   };
 }

@@ -194,6 +194,68 @@ JSON shape:
   revalidatePath("/analytics");
 }
 
+export async function generateRetryWrongAnswers(formData: FormData) {
+  const user = await requireUser();
+  const supabase = await createServerSupabaseClient();
+  const sessionId = String(formData.get("sessionId") ?? "").trim();
+
+  if (!sessionId) {
+    throw new Error("Missing quiz session for retry");
+  }
+
+  const { data: session, error } = await supabase
+    .from("quiz_sessions")
+    .select(
+      "id,topic,source_note_ids,questions,status,quiz_answers(question_index,is_correct)"
+    )
+    .eq("id", sessionId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (error || !session) {
+    if (error && isMissingQuizTableError(error.message)) {
+      throw new Error(
+        "Quiz mode is not ready in Supabase yet. Run the latest schema.sql to create quiz tables."
+      );
+    }
+    throw new Error(error?.message ?? "Retry source quiz not found");
+  }
+
+  if (session.status !== "completed") {
+    throw new Error("Complete this quiz first before retrying wrong answers");
+  }
+
+  const questions = (session.questions as QuizQuestion[] | null) ?? [];
+  const wrongIndexes = new Set(
+    ((session.quiz_answers as Array<{ question_index: number; is_correct: boolean | null }> | null) ?? [])
+      .filter((answer) => answer.is_correct === false)
+      .map((answer) => answer.question_index)
+  );
+
+  const retryQuestions = questions.filter((_, index) => wrongIndexes.has(index)).slice(0, 5);
+
+  if (!retryQuestions.length) {
+    throw new Error("No incorrect answers found. Great job, nothing to retry.");
+  }
+
+  const { error: insertError } = await supabase.from("quiz_sessions").insert({
+    user_id: user.id,
+    topic: session.topic ?? "Wrong-answer retry",
+    difficulty: "retry-wrong",
+    source_note_ids: session.source_note_ids ?? [],
+    questions: retryQuestions,
+    total_questions: retryQuestions.length,
+    status: "generated"
+  });
+
+  if (insertError) {
+    throw new Error(insertError.message);
+  }
+
+  revalidatePath("/quiz");
+  revalidatePath("/analytics");
+}
+
 export async function submitAdaptiveQuiz(formData: FormData) {
   const user = await requireUser();
   const supabase = await createServerSupabaseClient();

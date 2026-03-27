@@ -9,7 +9,18 @@ import { SubmitButton } from "@/components/ui/SubmitButton";
 type ChatRecord = {
   id: string;
   created_at: string;
-  messages: Array<{ role: string; content: string }>;
+  messages: Array<{
+    role: string;
+    content: string;
+    citations?: Array<{
+      label?: string;
+      noteTitle?: string;
+      subject?: string | null;
+      topic?: string | null;
+      similarity?: number | null;
+      preview?: string;
+    }>;
+  }>;
 };
 
 type ChatPanelProps = {
@@ -217,7 +228,40 @@ export function ChatPanel({
                     >
                       <p className="mb-2 text-xs font-black uppercase">{message.role}</p>
                       {message.role === "assistant" ? (
-                        <AssistantMessage content={message.content} />
+                        <div className="space-y-3">
+                          <AssistantMessage content={message.content} />
+                          {Array.isArray(message.citations) && message.citations.length ? (
+                            <div className="border-[3px] border-ink bg-white p-3 shadow-brutal-sm">
+                              <p className="text-[10px] font-black uppercase">Sources used</p>
+                              <div className="mt-2 space-y-2">
+                                {message.citations.slice(0, 3).map((citation, citationIndex) => (
+                                  <div
+                                    key={`${chat.id}-${index}-${citationIndex}`}
+                                    className="border-[3px] border-ink bg-cream p-2"
+                                  >
+                                    <p className="text-[10px] font-black uppercase">
+                                      {citation.label || `Source ${citationIndex + 1}`} -{" "}
+                                      {citation.noteTitle || "Untitled note"}
+                                    </p>
+                                    <p className="mt-1 text-xs font-bold uppercase leading-5">
+                                      {[citation.subject, citation.topic]
+                                        .filter(Boolean)
+                                        .join(" / ") || "General"}
+                                      {typeof citation.similarity === "number"
+                                        ? ` | Similarity ${citation.similarity.toFixed(2)}`
+                                        : ""}
+                                    </p>
+                                    {citation.preview ? (
+                                      <p className="mt-1 line-clamp-2 text-xs font-bold leading-5">
+                                        {citation.preview}
+                                      </p>
+                                    ) : null}
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          ) : null}
+                        </div>
                       ) : (
                         <p className="whitespace-pre-wrap text-sm font-bold leading-6">
                           {message.content}

@@ -3,6 +3,7 @@ import { requireUser } from "@/lib/auth";
 import { createServerSupabaseClient } from "@/lib/supabase";
 import {
   generateAdaptiveQuiz,
+  generateRetryWrongAnswers,
   getLatestQuizSession,
   getQuizSessionById,
   getRecentQuizSessions,
@@ -54,6 +55,7 @@ export default async function QuizPage({ searchParams }: QuizPageProps) {
       setupReady={!quizSetup.error}
       selectedSessionId={selectedSessionId}
       generateAdaptiveQuizAction={generateAdaptiveQuiz}
+      generateRetryWrongAnswersAction={generateRetryWrongAnswers}
       submitAdaptiveQuizAction={submitAdaptiveQuiz}
     />
   );

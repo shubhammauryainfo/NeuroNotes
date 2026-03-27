@@ -39,8 +39,12 @@ create table if not exists public.messages (
   chat_id uuid not null references public.chats(id) on delete cascade,
   role text not null check (role in ('user', 'assistant')),
   content text not null,
+  citations jsonb not null default '[]'::jsonb,
   created_at timestamptz not null default now()
 );
+
+alter table public.messages
+add column if not exists citations jsonb not null default '[]'::jsonb;
 
 create table if not exists public.user_profile (
   user_id uuid primary key references auth.users(id) on delete cascade,
