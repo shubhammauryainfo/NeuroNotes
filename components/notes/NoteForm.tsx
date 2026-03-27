@@ -9,7 +9,29 @@ export function NoteForm() {
 
   return (
     <Card className="bg-white">
-      <h2 className="mb-4 text-xl font-black uppercase">Create note</h2>
+      <div className="mb-5 flex flex-col gap-4 border-b-[3px] border-ink pb-4">
+        <div>
+          <h2 className="text-xl font-black uppercase">Create note</h2>
+          <p className="mt-2 text-sm font-black uppercase leading-6">
+            Paste lecture notes, upload study documents, or combine both in one
+            save for chunking and embeddings.
+          </p>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-3">
+          <div className="border-[3px] border-ink bg-lemon p-3 shadow-brutal-sm">
+            <p className="text-[10px] font-black uppercase">Upload limit</p>
+            <p className="mt-2 text-lg font-black uppercase">{maxUploadSizeMb} MB</p>
+          </div>
+          <div className="border-[3px] border-ink bg-sky p-3 shadow-brutal-sm">
+            <p className="text-[10px] font-black uppercase">Accepted files</p>
+            <p className="mt-2 text-lg font-black uppercase">PDF DOCX TXT</p>
+          </div>
+          <div className="border-[3px] border-ink bg-mint p-3 shadow-brutal-sm">
+            <p className="text-[10px] font-black uppercase">Output</p>
+            <p className="mt-2 text-lg font-black uppercase">Chunks + RAG</p>
+          </div>
+        </div>
+      </div>
       <form action={createNote} className="grid gap-4">
         <Input
           name="title"

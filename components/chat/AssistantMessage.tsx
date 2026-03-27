@@ -97,7 +97,7 @@ export function AssistantMessage({ content }: { content: string }) {
   }
 
   return (
-    <div className="max-h-80 space-y-3 overflow-y-auto pr-2">
+    <div className="max-h-96 space-y-3 overflow-y-auto pr-2">
       {blocks.map((block, blockIndex) => {
         if (block.type === "heading") {
           return (
@@ -118,7 +118,7 @@ export function AssistantMessage({ content }: { content: string }) {
             >
               {block.items.map((item, itemIndex) => (
                 <li key={`bullet-${blockIndex}-${itemIndex}`} className="flex gap-3">
-                  <span className="font-black">■</span>
+                  <span className="font-black">-</span>
                   <span>{renderInline(item)}</span>
                 </li>
               ))}

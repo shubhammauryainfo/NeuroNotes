@@ -48,10 +48,7 @@ function parseBlocks(content: string): NoteBlock[] {
     }
 
     if (isHeading(line)) {
-      blocks.push({
-        type: "heading",
-        content: cleanHeading(line)
-      });
+      blocks.push({ type: "heading", content: cleanHeading(line) });
       index += 1;
       continue;
     }
@@ -125,7 +122,7 @@ export function AiNotesPreview({ content }: { content: string }) {
     <Card className="bg-mint">
       <details className="group" open>
         <summary className="cursor-pointer list-none">
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h2 className="text-xl font-black uppercase">Latest AI notes</h2>
               <p className="mt-2 text-xs font-black uppercase group-open:hidden">
@@ -135,13 +132,24 @@ export function AiNotesPreview({ content }: { content: string }) {
                 Collapse AI notes
               </p>
             </div>
-            <span className="border-[3px] border-ink bg-white px-3 py-1 text-[10px] font-black uppercase text-ink shadow-brutal-sm">
-              Scroll
-            </span>
+            <div className="flex flex-wrap gap-2 text-[10px] font-black uppercase">
+              <span className="border-[3px] border-ink bg-white px-3 py-1 text-ink shadow-brutal-sm">
+                Scroll
+              </span>
+              <span className="border-[3px] border-ink bg-white px-3 py-1 text-ink shadow-brutal-sm">
+                Blocks: {blocks.length}
+              </span>
+            </div>
           </div>
         </summary>
 
         <div className="mt-4 max-h-[30rem] space-y-4 overflow-y-auto pr-2">
+          {!blocks.length ? (
+            <div className="border-[3px] border-dashed border-ink bg-white p-5 text-sm font-black uppercase leading-6 shadow-brutal-sm">
+              Generate or refresh a study summary to see structured AI notes here.
+            </div>
+          ) : null}
+
           {blocks.map((block, index) => {
             if (block.type === "heading") {
               return (
@@ -162,7 +170,7 @@ export function AiNotesPreview({ content }: { content: string }) {
                 >
                   {block.items.map((item, itemIndex) => (
                     <li key={`bullet-${index}-${itemIndex}`} className="flex gap-3">
-                      <span className="mt-[2px] text-base font-black">■</span>
+                      <span className="mt-[2px] text-base font-black">-</span>
                       <span>{renderInlineEmphasis(item)}</span>
                     </li>
                   ))}
