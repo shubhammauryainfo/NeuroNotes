@@ -362,7 +362,8 @@ export function QuizWorkspace({
               </p>
             </div>
           ) : (
-            <form action={submitAdaptiveQuizAction} className="mt-6 space-y-5">
+            <>
+              <form action={submitAdaptiveQuizAction} className="mt-6 space-y-5">
               <input type="hidden" name="sessionId" value={activeQuiz.id} />
 
               <div className="sticky top-4 z-10 border-[3px] border-ink bg-lemon p-4 shadow-brutal">
@@ -544,8 +545,10 @@ export function QuizWorkspace({
                 </div>
               ) : null}
 
+              </form>
+
               {isCompleted ? (
-                <div className="border-[3px] border-ink bg-cream p-4 shadow-brutal-sm">
+                <div className="mt-5 border-[3px] border-ink bg-cream p-4 shadow-brutal-sm">
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <p className="text-sm font-black uppercase leading-6">
                       Build a focused retry quiz from only the questions you missed.
@@ -561,7 +564,7 @@ export function QuizWorkspace({
                   </div>
                 </div>
               ) : null}
-            </form>
+            </>
           )}
         </Card>
 
