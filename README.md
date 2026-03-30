@@ -1,21 +1,55 @@
 # NeuroNotes
 
-NeuroNotes is a full-stack AI second brain for students built with Next.js, Supabase, pgvector, and OpenRouter.
+NeuroNotes is a full-stack AI second brain for students. It combines notes, retrieval-augmented chat, and study tools (summaries, MCQs, flashcards, viva questions) in one app.
 
-## Setup
+## Tech Stack
 
-1. Copy `.env.example` to `.env.local`.
-2. Fill in your Supabase and OpenRouter keys.
-3. Run the SQL in `supabase/schema.sql` inside the Supabase SQL editor.
-4. Install dependencies with `npm install`.
-5. Start the app with `npm run dev`.
+- Next.js (App Router) + React + TypeScript
+- Supabase (Auth + Postgres)
+- pgvector for semantic retrieval
+- OpenRouter for LLM + embedding models
+- Tailwind CSS
 
-## Implemented in this milestone
+## Quick Start
 
-- Next.js App Router scaffold with neobrutalist UI system
-- Supabase Google OAuth flow and protected routes
-- Notes CRUD server actions and API routes
-- Chunking plus embedding creation hooks
-- RAG query pipeline against pgvector via `match_note_chunks`
-- AI study tools for summaries, MCQs, flashcards, and viva questions
-- Dashboard, Notes, Chat, and Analytics pages
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+2. Create a `.env` file in the project root and add:
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=
+   SUPABASE_SERVICE_ROLE_KEY=
+   OPENROUTER_API_KEY=
+   OPENROUTER_CHAT_MODEL=
+   OPENROUTER_EMBEDDING_MODEL=
+   NEXT_PUBLIC_SITE_URL=
+   ```
+3. Run the SQL from `supabase/schema.sql` in your Supabase SQL editor.
+4. Start the dev server:
+   ```bash
+   npm run dev
+   ```
+5. Open `http://localhost:3000`.
+
+## Available Scripts
+
+- `npm run dev` - start local development server
+- `npm run build` - create production build
+- `npm run start` - run production server
+- `npm run lint` - run linting
+- `npm run typecheck` - run TypeScript checks
+
+## Current Features
+
+- Google OAuth authentication with protected routes
+- Notes CRUD and document ingestion
+- Embedding generation + chunk retrieval pipeline
+- RAG chat over your notes
+- AI study tools:
+  - summarization
+  - MCQ generation
+  - flashcards
+  - viva questions
+- Dashboard, Notes, Chat, Quiz, and Analytics pages
