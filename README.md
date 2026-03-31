@@ -18,13 +18,13 @@ NeuroNotes is a full-stack AI second brain for students. It combines notes, retr
    ```
 2. Create a `.env` file in the project root and add:
    ```env
-   NEXT_PUBLIC_SUPABASE_URL=
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=
-   SUPABASE_SERVICE_ROLE_KEY=
-   OPENROUTER_API_KEY=
-   OPENROUTER_CHAT_MODEL=
-   OPENROUTER_EMBEDDING_MODEL=
-   NEXT_PUBLIC_SITE_URL=
+   NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_here
+   SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key_here
+   OPENROUTER_API_KEY=sk-or-v1-your_openrouter_api_key_here
+   OPENROUTER_CHAT_MODEL=openai/gpt-4o-mini
+   OPENROUTER_EMBEDDING_MODEL=text-embedding-3-small
+   NEXT_PUBLIC_SITE_URL=http://localhost:3000
    ```
 3. Run the SQL from `supabase/schema.sql` in your Supabase SQL editor.
 4. Start the dev server:
