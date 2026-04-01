@@ -9,6 +9,8 @@
                 |-- route.ts
             |-- mcq
                 |-- route.ts
+            |-- night-before-sheet
+                |-- route.ts
             |-- summarize
                 |-- route.ts
             |-- viva
@@ -44,6 +46,7 @@
         |-- AssistantMessage.tsx
         |-- ChatPanel.tsx
     |-- dashboard
+        |-- NightBeforeSheet.tsx
         |-- StatsGrid.tsx
     |-- notes
         |-- AiNotesPreview.tsx

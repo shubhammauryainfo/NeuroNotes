@@ -61,7 +61,7 @@ function buildFallbackContext(scoredNotes: Array<{ note: FallbackNote; score: nu
 
 function buildChunkCitations(chunks: RetrievedChunk[]) {
   return chunks.slice(0, 3).map((chunk, index) => ({
-    label: `Chunk ${index + 1}`,
+    label: `S${index + 1}`,
     noteTitle: chunk.note_title || "Untitled note",
     subject: chunk.subject ?? null,
     topic: chunk.topic ?? null,
@@ -77,7 +77,7 @@ function buildFallbackCitations(
   scoredNotes: Array<{ note: FallbackNote; score: number }>
 ) {
   return scoredNotes.slice(0, 3).map(({ note, score }, index) => ({
-    label: `Fallback ${index + 1}`,
+    label: `S${index + 1}`,
     noteTitle: note.title || "Untitled note",
     subject: note.subject ?? null,
     topic: note.topic ?? null,
@@ -107,7 +107,7 @@ export async function askYourNotes(question: string, userId: string) {
       const label = [chunk.note_title, chunk.subject, chunk.topic]
         .filter(Boolean)
         .join(" / ");
-      return `[Chunk ${index + 1}${label ? ` - ${label}` : ""}]\n${chunk.content_chunk}`;
+      return `[Source S${index + 1}${label ? ` - ${label}` : ""}]\n${chunk.content_chunk}`;
     });
 
   if (contextBlocks.length === 0) {
@@ -139,9 +139,12 @@ export async function askYourNotes(question: string, userId: string) {
   const prompt = `You are a strict study assistant.
 
 Rules:
-Answer ONLY from context
-If not found, say 'Not in notes'
-Keep structured answers
+Answer ONLY from context.
+If not found, say exactly: Not in notes.
+Keep structured answers.
+For every factual statement, append source IDs like [S1] or [S1, S2].
+Only use source IDs that exist in the context blocks.
+Do not invent citations.
 
 User Profile:
 ${JSON.stringify(profile ?? {}, null, 2)}

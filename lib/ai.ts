@@ -73,3 +73,45 @@ Return the result in neat student-note format.`,
     }
   ]);
 }
+
+export async function generateNightBeforeSheet(input: {
+  subject: string;
+  context: string;
+}) {
+  const { subject, context } = input;
+
+  return askAI([
+    {
+      role: "system",
+      content:
+        "You are an exam revision coach. Generate a compact, high-signal final revision sheet."
+    },
+    {
+      role: "user",
+      content: `Build a one-page "T-12 Hours Night-Before Sheet" for the subject below using only the provided study context.
+
+Subject:
+${subject}
+
+Rules:
+- Use ONLY the context; do not invent facts
+- If context is missing for a section, write "Not in notes"
+- Keep output concise, practical, and exam-first
+- Prefer bullets over long paragraphs
+- Include formulas exactly when present in context
+- Include common mistakes and trap patterns
+- Include likely viva/oral questions with short model answers
+
+Required output structure (use these exact section headings):
+T-12 SNAPSHOT
+CORE FORMULAS
+HIGH-YIELD DEFINITIONS
+TRAPS TO AVOID
+PROBABLE VIVA QUESTIONS
+LAST 30-MINUTE PLAN
+
+Study context:
+${context}`
+    }
+  ]);
+}

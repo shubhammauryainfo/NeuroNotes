@@ -27,7 +27,7 @@ function cleanListItem(line: string) {
 }
 
 function renderInline(text: string) {
-  const parts = text.split(/(\*\*.*?\*\*)/g).filter(Boolean);
+  const parts = text.split(/(\*\*.*?\*\*|\[(?:S\d+(?:\s*,\s*S\d+)*)\])/g).filter(Boolean);
 
   return parts.map((part, index) => {
     if (part.startsWith("**") && part.endsWith("**")) {
@@ -35,6 +35,17 @@ function renderInline(text: string) {
         <strong key={`${part}-${index}`} className="font-black">
           {part.slice(2, -2)}
         </strong>
+      );
+    }
+
+    if (/^\[(?:S\d+(?:\s*,\s*S\d+)*)\]$/.test(part)) {
+      return (
+        <span
+          key={`${part}-${index}`}
+          className="mx-1 inline-block border-[2px] border-ink bg-lemon px-1.5 py-0.5 text-[10px] font-black uppercase leading-none shadow-brutal-sm"
+        >
+          {part}
+        </span>
       );
     }
 

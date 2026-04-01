@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { NightBeforeSheet } from "@/components/dashboard/NightBeforeSheet";
 import { StatsGrid } from "@/components/dashboard/StatsGrid";
 import { Card } from "@/components/ui/Card";
 import { requireUser } from "@/lib/auth";
@@ -9,7 +10,13 @@ export default async function DashboardPage() {
   const user = await requireUser();
   const supabase = await createServerSupabaseClient();
 
-  const [{ count: noteCount }, { count: chatCount }, { data: profile }, { data: notes }] =
+  const [
+    { count: noteCount },
+    { count: chatCount },
+    { data: profile },
+    { data: notes },
+    { data: noteSubjects }
+  ] =
     await Promise.all([
       supabase
         .from("notes")
@@ -29,8 +36,16 @@ export default async function DashboardPage() {
         .select("id,title,subject,topic,created_at")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false })
-        .limit(4)
+        .limit(4),
+      supabase
+        .from("notes")
+        .select("subject")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(100)
     ]);
+
+  const subjects = [...new Set((noteSubjects ?? []).map((item) => item.subject).filter(Boolean))] as string[];
 
   const stats = [
     { label: "Notes", value: noteCount ?? 0, color: "bg-lemon" },
@@ -105,6 +120,8 @@ export default async function DashboardPage() {
           </div>
         </Card>
       </section>
+
+      <NightBeforeSheet subjects={subjects} />
     </main>
   );
 }
